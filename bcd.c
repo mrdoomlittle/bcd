@@ -8,15 +8,17 @@
 # include <unistd.h>
 # include <eint_t.h>
 # include <bci.h>
-
 # define incr_itr(__itr, __amount) __itr+=__amount;
+
 char const* bcit_to_str(mdl_u8_t __type) {
 	switch(__type) {
 		case _bcit_w8: return "w8";
 		case _bcit_w16: return "w16";
 		case _bcit_w32: return "w32";
 		case _bcit_w64: return "w64";
+		case _bcit_addr: return "addr";
 	}
+	printf("got: %u\n", __type);
 	return "unknown";
 }
 
@@ -27,7 +29,7 @@ mdl_uint_t bc_read(mdl_u8_t *__itr, mdl_u8_t __type) {
 		case _bcit_w8:
 			val = *(mdl_u8_t*)__itr;
 		break;
-		case _bcit_w16:
+		case _bcit_w16: case _bcit_addr:
 			val = *(mdl_u16_t*)__itr;
 		break;
 		case _bcit_w32:
@@ -45,47 +47,47 @@ void bcii_print(mdl_u8_t **__itr) {
 	printf("bcii_print,	");
 
 	mdl_u8_t type;
-	printf("type: %s,	", bcit_to_str((type = *(mdl_u8_t*)*__itr)));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("type_%s,	", bcit_to_str((type = *(mdl_u8_t*)*__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("addr: %u\n", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	printf("addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 }
 
 void bcii_exit(mdl_u8_t **__itr) {
-	printf("bci_exit\n");
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("exit\n");
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 }
 
 void bcii_assign(mdl_u8_t **__itr) {
-	printf("bcii_assign,	");
+	printf("bcii_assign,\t");
 
 	mdl_u8_t type;
-	printf("type: %s,	", bcit_to_str((type = *(mdl_u8_t*)*__itr)));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("type_%s,\t", bcit_to_str((type = *(mdl_u8_t*)*__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("addr: %u,	", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	printf("addr{%u},\t", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 
-	printf("val: %u\n", bc_read(*__itr, type));
-	incr_itr((*__itr), bci_sizeof(type));
+	printf("val{%u}\n", bc_read(*__itr, type));
+	incr_itr((*__itr), bcit_sizeof(type));
 }
 
 void bcii_mov(mdl_u8_t **__itr) {
 	printf("bcii_mov,	");
 
 	mdl_u8_t dest_type, src_type;
-	printf("dest_type: %s,	", bcit_to_str((dest_type = *(mdl_u8_t*)*__itr)));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("dest_type_%s,	", bcit_to_str((dest_type = *(mdl_u8_t*)*__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("src_type: %s,	", bcit_to_str((src_type = *(mdl_u8_t*)*__itr)));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("src_type_%s,	", bcit_to_str((src_type = *(mdl_u8_t*)*__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("dest_addr: %u,	", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	printf("dest_addr{%u},	", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 
-	printf("src_addr: %u\n", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	printf("src_addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 }
 
 char const* aop_to_str(mdl_u8_t __aop) {
@@ -99,30 +101,118 @@ char const* aop_to_str(mdl_u8_t __aop) {
 	return "unknown";
 }
 
-void bcii_aop(mdl_u8_t **__itr) {
+void bcii_aop(mdl_u8_t **__itr, bcii_flag_t __flags) {
 	printf("bcii_aop,	");
 
-	mdl_u8_t aop;
-	printf("aop_type: %s,	", aop_to_str((aop = *(mdl_u8_t*)*__itr)));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	mdl_u8_t aop, type;
+	printf("aop_kind_%s,	", aop_to_str((aop = *(mdl_u8_t*)*__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("l_type: %s,	", bcit_to_str(*(mdl_u8_t*)*__itr));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("type_%s,	", bcit_to_str((type = *(mdl_u8_t*)*__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("r_type: %s,	", bcit_to_str(*(mdl_u8_t*)*__itr));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+	printf("dest_addr{%u},	", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 
-	printf("l_addr: %u,	", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	if (is_flag(__flags, _bcii_aop_fl_pm)) {
+		printf("l_val{%u},	", bc_read(*__itr, type));
+		incr_itr((*__itr), bcit_sizeof(type));
+	} else {
+		printf("l_addr{%u},	", *(bci_addr_t*)*__itr);
+		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
+	}
 
-	printf("r_addr: %u,	", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	if (is_flag(__flags, _bcii_aop_fr_pm)) {
+		printf("l_val{%u}\n", bc_read(*__itr, type));
+		incr_itr((*__itr), bcit_sizeof(type));
+	} else {
+		printf("r_addr{%u}\n", *(bci_addr_t*)*__itr);
+		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
+	}
+}
 
-	printf("dest_type: %s,	", bcit_to_str(*(mdl_u8_t*)*__itr));
-	incr_itr((*__itr), bci_sizeof(_bcit_w8));
+void bcii_cmp(mdl_u8_t **__itr) {
+	printf("bcii_cmp,	");
 
-	printf("dest_addr: %u\n", *(mdl_u16_t*)*__itr);
-	incr_itr((*__itr), bci_sizeof(_bcit_w16));
+	printf("l_type_%s,	", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("r_type_%s,	", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("l_addr{%u},	", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("r_addr{%u},	", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("dest_addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+}
+
+void bcii_cjmp(mdl_u8_t **__itr) {
+	printf("bcii_cjmp,	");
+
+	printf("cond{%u}, ", *(mdl_u8_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("jmpm_addr{%u}, ", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("cond_addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+}
+
+void bcii_jmp(mdl_u8_t **__itr) {
+	printf("bcii_jmp,	");
+
+	printf("jmpm_addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+}
+
+void bcii_dr(mdl_u8_t **__itr) {
+	printf("bcii_dr,	");
+
+	printf("src_type_%s,  ", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("dest_type_%s,   ", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("src_addr{%u},  ", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("dest_addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+}
+
+void bcii_conv(mdl_u8_t **__itr) {
+	printf("bcii_conv,	");
+
+	printf("to_type_%s,  ", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("from_type_%s,   ", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("addr{%u}\n", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+}
+
+void bcii_extern_call(mdl_u8_t **__itr) {
+	printf("bcii_extern_call,	");
+
+	printf("ret_type_%s,  ", bcit_to_str(*(mdl_u8_t*)*__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
+
+	printf("ret_addr{%u},	", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("id_addr{%u},   ", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("arg_addr{%u}\n", *(mdl_u16_t*)*__itr);
+    incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 }
 
 int main(int argc, char const *argv[]) {
@@ -151,9 +241,21 @@ int main(int argc, char const *argv[]) {
 
 	for (mdl_u8_t *itr = bc; itr < bc+st.st_size;) {
 		mdl_u8_t i = *itr;
-		incr_itr(itr, bci_sizeof(_bcit_w8))
+		incr_itr(itr, bcit_sizeof(_bcit_w8));
+
+		bcii_flag_t flags = *(bcii_flag_t*)itr;
+		incr_itr(itr, sizeof(bcii_flag_t));
 
 		switch(i) {
+			case _bcii_extern_call:
+				bcii_extern_call(&itr);
+			break;
+			case _bcii_conv:
+				bcii_conv(&itr);
+			break;
+			case _bcii_dr:
+				bcii_dr(&itr);
+			break;
 			case _bcii_print:
 				bcii_print(&itr);
 			break;
@@ -167,11 +269,37 @@ int main(int argc, char const *argv[]) {
 				bcii_mov(&itr);
 			break;
 			case _bcii_aop:
-				bcii_aop(&itr);
+				bcii_aop(&itr, flags);
 			break;
+			case _bcii_cmp:
+				bcii_cmp(&itr);
+			break;
+			case _bcii_cjmp:
+				bcii_cjmp(&itr);
+			break;
+			case _bcii_jmp:
+				bcii_jmp(&itr);
+			break;
+			case _bcii_incr: case _bcii_decr: {
+				printf("bcii_%s,	", i == _bcii_incr? "incr":"decr");
 
+				printf("type_%s,	", bcit_to_str(*(mdl_u8_t*)itr));
+				incr_itr(itr, bcit_sizeof(_bcit_w8));
+
+				printf("addr{%u},	", *(bci_addr_t*)itr);
+				incr_itr(itr, bcit_sizeof(_bcit_addr));
+
+				mdl_u8_t no_bcit;
+				printf("no_type_%s,	", bcit_to_str((no_bcit = *(mdl_u8_t*)itr)));
+				incr_itr(itr, bcit_sizeof(_bcit_w8));
+
+				printf("amount{%u}\n", bc_read(itr, no_bcit));
+				incr_itr(itr, bcit_sizeof(no_bcit));
+
+				break;
+			}//bcii_incr_itr(itr, bcii_sizeof(itr-(1+sizeof(bcii_flag_t)), flags)); break;
 			default:
-				fprintf(stderr, "instruction unknown!!\n");
+				fprintf(stderr, "instruction unknown!! got: %x\n", i);
 			return -1;
 		}
 	}
