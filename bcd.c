@@ -18,7 +18,7 @@ char const* bcit_to_str(mdl_u8_t __type) {
 		case _bcit_w64: return "w64";
 		case _bcit_addr: return "addr";
 	}
-	printf("got: %u\n", __type);
+//	printf("got: %u\n", __type);
 	return "unknown";
 }
 
@@ -76,11 +76,7 @@ void bcii_assign(mdl_u8_t **__itr) {
 void bcii_mov(mdl_u8_t **__itr) {
 	printf("bcii_mov,	");
 
-	mdl_u8_t dest_type, src_type;
-	printf("dest_type_%s,	", bcit_to_str((dest_type = *(mdl_u8_t*)*__itr)));
-	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
-
-	printf("src_type_%s,	", bcit_to_str((src_type = *(mdl_u8_t*)*__itr)));
+	printf("type_%s,	", bcit_to_str(*(mdl_u8_t*)*__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
 	printf("dest_addr{%u},	", *(mdl_u16_t*)*__itr);
@@ -101,7 +97,7 @@ char const* aop_to_str(mdl_u8_t __aop) {
 	return "unknown";
 }
 
-void bcii_aop(mdl_u8_t **__itr, bcii_flag_t __flags) {
+void bcii_aop(mdl_u8_t **__itr, bci_flag_t __flags) {
 	printf("bcii_aop,	");
 
 	mdl_u8_t aop, type;
@@ -195,7 +191,10 @@ void bcii_conv(mdl_u8_t **__itr) {
 	printf("from_type_%s,   ", bcit_to_str(*(mdl_u8_t*)*__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 
-	printf("addr{%u}\n", *(mdl_u16_t*)*__itr);
+	printf("dst_addr{%u},	", *(mdl_u16_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
+
+	printf("src_addr{%u}\n", *(mdl_u16_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_w16));
 }
 
@@ -243,8 +242,8 @@ int main(int argc, char const *argv[]) {
 		mdl_u8_t i = *itr;
 		incr_itr(itr, bcit_sizeof(_bcit_w8));
 
-		bcii_flag_t flags = *(bcii_flag_t*)itr;
-		incr_itr(itr, sizeof(bcii_flag_t));
+		bci_flag_t flags = *(bci_flag_t*)itr;
+		incr_itr(itr, sizeof(bci_flag_t));
 
 		switch(i) {
 			case _bcii_extern_call:
@@ -297,7 +296,7 @@ int main(int argc, char const *argv[]) {
 				incr_itr(itr, bcit_sizeof(no_bcit));
 
 				break;
-			}//bcii_incr_itr(itr, bcii_sizeof(itr-(1+sizeof(bcii_flag_t)), flags)); break;
+			}//bcii_incr_itr(itr, bcii_sizeof(itr-(1+sizeof(bci_flag_t)), flags)); break;
 			default:
 				fprintf(stderr, "instruction unknown!! got: %x\n", i);
 			return -1;
