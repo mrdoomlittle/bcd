@@ -60,7 +60,6 @@ void bcii_print(mdl_u8_t **__itr) {
 
 void bcii_exit(mdl_u8_t **__itr) {
 	printf("exit\n");
-	incr_itr((*__itr), bcit_sizeof(_bcit_w8));
 }
 
 void bcii_assign(mdl_u8_t **__itr) {
@@ -311,12 +310,17 @@ int main(int argc, char const *argv[]) {
 				printf("addr{%u},	", *(bci_addr_t*)itr);
 				incr_itr(itr, bcit_sizeof(_bcit_addr));
 
-				mdl_u8_t no_bcit;
-				printf("no_type_%s,	", bcit_to_str((no_bcit = *itr)));
-				incr_itr(itr, bcit_sizeof(_bcit_w8));
+				if (is_flag(flags, _bcii_iod_fbc_addr)) {
+					printf("bc_addr{%u}\n", *(bci_addr_t*)itr);
+					incr_itr(itr, bcit_sizeof(_bcit_addr));
+				} else {
+					mdl_u8_t no_bcit;
+					printf("no_type_%s,	", bcit_to_str((no_bcit = *itr)));
+					incr_itr(itr, bcit_sizeof(_bcit_w8));
 
-				printf("amount{%u}\n", bc_read(itr, no_bcit));
-				incr_itr(itr, bcit_sizeof(no_bcit));
+					printf("bc{%u}\n", bc_read(itr, no_bcit));
+					incr_itr(itr, bcit_sizeof(no_bcit));
+				}
 
 				break;
 			}
