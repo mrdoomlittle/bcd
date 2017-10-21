@@ -11,12 +11,13 @@
 # define incr_itr(__itr, __amount) __itr+=__amount;
 
 char const* bcit_to_str(mdl_u8_t __type) {
-	switch(__type) {
+	mdl_u8_t sgnd = ((__type&_bcit_msigned) == _bcit_msigned);
+	switch(__type^(__type&_bcit_msigned)) {
 		case _bcit_void: return "void";
-		case _bcit_8l: return "8l";
-		case _bcit_16l: return "16l";
-		case _bcit_32l: return "32l";
-		case _bcit_64l: return "64l";
+		case _bcit_8l: return sgnd? "8l_s":"8l_u";
+		case _bcit_16l: return sgnd? "16l_s":"16l_u";
+		case _bcit_32l: return sgnd? "32l_s":"32l_u";
+		case _bcit_64l: return sgnd? "64l_s":"64l_u";
 		case _bcit_addr: return "addr";
 	}
 //	printf("got: %u\n", __type);
@@ -26,7 +27,7 @@ char const* bcit_to_str(mdl_u8_t __type) {
 mdl_uint_t bc_read(mdl_u8_t *__itr, mdl_u8_t __type) {
 	mdl_uint_t val;
 
-	switch(__type) {
+	switch(__type^(__type&_bcit_msigned)) {
 		case _bcit_void: return 0;
 		case _bcit_8l:
 			val = *(mdl_u8_t*)__itr;
