@@ -96,11 +96,20 @@ char const* aop_to_str(mdl_u8_t __aop) {
 	return "unknown";
 }
 
+char const* lop_to_str(mdl_u8_t __lop) {
+	switch(__lop) {
+		case _bci_lop_xor: return "xor";
+		case _bci_lop_or: return "or";
+		case _bci_lop_and: return "and";
+	}
+	return "unknown";
+}
+
 void bcii_aop(mdl_u8_t **__itr, bci_flag_t __flags) {
 	printf("bcii_aop,\t");
 
-	mdl_u8_t aop, type;
-	printf("aop_kind_%s,\t", aop_to_str((aop = **__itr)));
+	mdl_u8_t type;
+	printf("aop_kind_%s,\t", aop_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
 	printf("type_%s,\t", bcit_to_str((type = **__itr)));
@@ -118,6 +127,36 @@ void bcii_aop(mdl_u8_t **__itr, bci_flag_t __flags) {
 	}
 
 	if (is_flag(__flags, _bcii_aop_fr_pm)) {
+		printf("l_val{%u}\n", bc_read(*__itr, type));
+		incr_itr((*__itr), bcit_sizeof(type));
+	} else {
+		printf("r_addr{%u}\n", *(bci_addr_t*)*__itr);
+		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
+	}
+}
+
+void bcii_lop(mdl_u8_t **__itr, bci_flag_t __flags) {
+	printf("bcii_lop,\t");
+
+	mdl_u8_t type;
+	printf("lop_kind_%s,\t", lop_to_str(**__itr));
+	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
+
+	printf("type_%s,\t", bcit_to_str((type = **__itr)));
+	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
+
+	printf("dst_addr{%u},\t", *(bci_addr_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
+
+	if (is_flag(__flags, _bcii_lop_fl_pm)) {
+		printf("l_val{%u},\t", bc_read(*__itr, type));
+		incr_itr((*__itr), bcit_sizeof(type));
+	} else {
+		printf("l_addr{%u},\t", *(bci_addr_t*)*__itr);
+		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
+	}
+
+	if (is_flag(__flags, _bcii_lop_fr_pm)) {
 		printf("l_val{%u}\n", bc_read(*__itr, type));
 		incr_itr((*__itr), bcit_sizeof(type));
 	} else {
@@ -262,6 +301,9 @@ int main(int argc, char const *argv[]) {
 		incr_itr(itr, sizeof(bci_flag_t));
 
 		switch(i) {
+			case _bcii_lop:
+				bcii_lop(&itr, flags);
+			break;
 			case _bcii_nop:
 				printf("bcii_nop.\n");
 			break;
