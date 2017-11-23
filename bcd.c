@@ -7,7 +7,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <mdlint.h>
-# include <bci.h>
+# include <mdl/bci.h>
 # define incr_itr(__itr, __amount) __itr+=__amount;
 
 char const* bcit_to_str(mdl_u8_t __type) {
