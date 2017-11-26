@@ -269,6 +269,13 @@ void bcii_eeb_put(mdl_u8_t **__itr) {
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
+void bcii_la(mdl_u8_t **__itr) {
+	printf("bcii_la,\t");
+
+	printf("addr{%u}\n", *(bci_addr_t*)*__itr);
+	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
+}
+
 int main(int argc, char const *argv[]) {
 	if (argc < 2) {
 		fprintf(stderr, "usage: [byte code file]\n");
@@ -320,7 +327,8 @@ int main(int argc, char const *argv[]) {
 				bcii_print(&itr);
 			break;
 			case _bcii_exit:
-				printf("bcii_exit.\n");
+				printf("bcii_exit, status: %d\n", *(bci_err_t*)itr);
+				incr_itr(itr, sizeof(bci_err_t));
 			break;
 			case _bcii_assign:
 				bcii_assign(&itr);
@@ -368,6 +376,9 @@ int main(int argc, char const *argv[]) {
 			break;
 			case _bcii_eeb_put:
 				bcii_eeb_put(&itr);
+			break;
+			case _bcii_la:
+				bcii_la(&itr);
 			break;
 			default: {
 				mdl_uint_t s;
