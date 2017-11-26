@@ -49,24 +49,24 @@ mdl_uint_t bc_read(mdl_u8_t *__itr, mdl_u8_t __type) {
 }
 
 void bcii_print(mdl_u8_t **__itr) {
-	printf("bcii_print.\t");
+	printf("bcii_print.\t\t");
 
 	mdl_u8_t type;
-	printf("type_%s,\t", bcit_to_str((type = **__itr)));
+	printf("type_%s,\t\t", bcit_to_str((type = **__itr)));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_assign(mdl_u8_t **__itr) {
-	printf("bcii_assign,\t");
+	printf("bcii_assign,\t\t");
 
 	mdl_u8_t type;
-	printf("type_%s,\t", bcit_to_str((type = **__itr)));
+	printf("type_%s,\t\t", bcit_to_str((type = **__itr)));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("addr{0x%04x},\t\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
 	printf("val{%u}\n", bc_read(*__itr, type));
@@ -74,15 +74,15 @@ void bcii_assign(mdl_u8_t **__itr) {
 }
 
 void bcii_mov(mdl_u8_t **__itr) {
-	printf("bcii_mov,\t");
+	printf("bcii_mov,\t\t");
 
-	printf("type_%s,\t", bcit_to_str(**__itr));
+	printf("type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("dst_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("dst_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("src_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("src_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
@@ -106,23 +106,23 @@ char const* lop_to_str(mdl_u8_t __lop) {
 }
 
 void bcii_aop(mdl_u8_t **__itr, bci_flag_t __flags) {
-	printf("bcii_aop,\t");
+	printf("bcii_aop,\t\t");
 
 	mdl_u8_t type;
-	printf("aop_kind_%s,\t", aop_to_str(**__itr));
+	printf("aop_kind_%s,\t\t", aop_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("type_%s,\t", bcit_to_str((type = **__itr)));
+	printf("type_%s,\t\t", bcit_to_str((type = **__itr)));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("dst_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("dst_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
 	if (is_flag(__flags, _bcii_aop_fl_pm)) {
-		printf("l_val{%u},\t", bc_read(*__itr, type));
+		printf("l_val{%u},\t\t", bc_read(*__itr, type));
 		incr_itr((*__itr), bcit_sizeof(type));
 	} else {
-		printf("l_addr{%u},\t", *(bci_addr_t*)*__itr);
+		printf("l_addr{0x%04x},\t\t", *(bci_addr_t*)*__itr);
 		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 	}
 
@@ -130,29 +130,29 @@ void bcii_aop(mdl_u8_t **__itr, bci_flag_t __flags) {
 		printf("l_val{%u}\n", bc_read(*__itr, type));
 		incr_itr((*__itr), bcit_sizeof(type));
 	} else {
-		printf("r_addr{%u}\n", *(bci_addr_t*)*__itr);
+		printf("r_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 	}
 }
 
 void bcii_lop(mdl_u8_t **__itr, bci_flag_t __flags) {
-	printf("bcii_lop,\t");
+	printf("bcii_lop,\t\t");
 
 	mdl_u8_t type;
-	printf("lop_kind_%s,\t", lop_to_str(**__itr));
+	printf("lop_kind_%s,\t\t", lop_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("type_%s,\t", bcit_to_str((type = **__itr)));
+	printf("type_%s,\t\t", bcit_to_str((type = **__itr)));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("dst_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("dst_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
 	if (is_flag(__flags, _bcii_lop_fl_pm)) {
-		printf("l_val{%u},\t", bc_read(*__itr, type));
+		printf("l_val{%u},\t\t", bc_read(*__itr, type));
 		incr_itr((*__itr), bcit_sizeof(type));
 	} else {
-		printf("l_addr{%u},\t", *(bci_addr_t*)*__itr);
+		printf("l_addr{0x%04x},\t\t", *(bci_addr_t*)*__itr);
 		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 	}
 
@@ -160,119 +160,119 @@ void bcii_lop(mdl_u8_t **__itr, bci_flag_t __flags) {
 		printf("l_val{%u}\n", bc_read(*__itr, type));
 		incr_itr((*__itr), bcit_sizeof(type));
 	} else {
-		printf("r_addr{%u}\n", *(bci_addr_t*)*__itr);
+		printf("r_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 		incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 	}
 }
 
 void bcii_cmp(mdl_u8_t **__itr) {
-	printf("bcii_cmp,\t");
+	printf("bcii_cmp,\t\t");
 
-	printf("l_type_%s,\t", bcit_to_str(**__itr));
+	printf("l_type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("r_type_%s,\t", bcit_to_str(**__itr));
+	printf("r_type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("l_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("l_addr{0x%04x},\t\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("r_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("r_addr{0x%04x},\t\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("dst_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("dst_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_cjmp(mdl_u8_t **__itr) {
-	printf("bcii_cjmp,\t");
+	printf("bcii_cjmp,\t\t");
 
-	printf("cond{%u},\t", **__itr);
+	printf("cond{%u},\t\t", **__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("jmpm_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("jmpm_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("cond_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("cond_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_jmp(mdl_u8_t **__itr) {
-	printf("bcii_jmp,\t");
+	printf("bcii_jmp,\t\t");
 
-	printf("jmpm_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("jmpm_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_dr(mdl_u8_t **__itr) {
-	printf("bcii_dr,\t");
+	printf("bcii_dr,\t\t");
 
-	printf("type_%s,\t", bcit_to_str(**__itr));
+	printf("type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("src_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("src_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("dst_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("dst_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_conv(mdl_u8_t **__itr) {
-	printf("bcii_conv,\t");
+	printf("bcii_conv,\t\t");
 
-	printf("to_type_%s,\t", bcit_to_str(**__itr));
+	printf("to_type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("from_type_%s,\t", bcit_to_str(**__itr));
+	printf("from_type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("dst_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("dst_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("src_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("src_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_extern_call(mdl_u8_t **__itr) {
 	printf("bcii_extern_call,\t");
 
-	printf("ret_type_%s,\t", bcit_to_str(**__itr));
+	printf("ret_type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("ret_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("ret_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("id_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("id_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("arg_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("arg_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
     incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_eeb_init(mdl_u8_t **__itr) {
-	printf("bcii_eeb_init,\t");
+	printf("bcii_eeb_init,\t\t");
 
 	printf("blk_c{%u}\n", **__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 }
 
 void bcii_eeb_put(mdl_u8_t **__itr) {
-	printf("bcii_eeb_put,\t");
+	printf("bcii_eeb_put,\t\t");
 
-	printf("blk_id{%u},\t", **__itr);
+	printf("blk_id{%u},\t\t", **__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
 
-	printf("b_addr{%u},\t", *(bci_addr_t*)*__itr);
+	printf("b_addr{0x%04x},\t", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 
-	printf("e_addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("e_addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
 void bcii_la(mdl_u8_t **__itr) {
-	printf("bcii_la,\t");
+	printf("bcii_la,\t\t");
 
-	printf("addr{%u}\n", *(bci_addr_t*)*__itr);
+	printf("addr{0x%04x}\n", *(bci_addr_t*)*__itr);
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
@@ -299,6 +299,7 @@ int main(int argc, char const *argv[]) {
 
 	mdl_u8_t *bc = (mdl_u8_t*)malloc(st.st_size);
 	read(fd, bc, st.st_size);
+	close(fd);
 
 	for (mdl_u8_t *itr = bc; itr < bc+st.st_size;) {
 		mdl_u8_t i = *itr;
@@ -327,8 +328,8 @@ int main(int argc, char const *argv[]) {
 				bcii_print(&itr);
 			break;
 			case _bcii_exit:
-				printf("bcii_exit, status: %d\n", *(bci_err_t*)itr);
-				incr_itr(itr, sizeof(bci_err_t));
+				printf("bcii_exit,\t\tstatus addr{0x%04x}\n", *(bci_addr_t*)itr);
+				incr_itr(itr, sizeof(bci_addr_t));
 			break;
 			case _bcii_assign:
 				bcii_assign(&itr);
@@ -349,12 +350,12 @@ int main(int argc, char const *argv[]) {
 				bcii_jmp(&itr);
 			break;
 			case _bcii_incr: case _bcii_decr: {
-				printf("bcii_%s,\t", i == _bcii_incr? "incr":"decr");
+				printf("bcii_%s,\t\t", i == _bcii_incr? "incr":"decr");
 
-				printf("type_%s,\t", bcit_to_str(*itr));
+				printf("type_%s,\t\t", bcit_to_str(*itr));
 				incr_itr(itr, bcit_sizeof(_bcit_8l));
 
-				printf("addr{%u},\t", *(bci_addr_t*)itr);
+				printf("addr{0x%04x},\t\t", *(bci_addr_t*)itr);
 				incr_itr(itr, bcit_sizeof(_bcit_addr));
 
 				if (is_flag(flags, _bcii_iod_fbc_addr)) {
@@ -362,7 +363,7 @@ int main(int argc, char const *argv[]) {
 					incr_itr(itr, bcit_sizeof(_bcit_addr));
 				} else {
 					mdl_u8_t no_bcit;
-					printf("no_type_%s,\t", bcit_to_str((no_bcit = *itr)));
+					printf("no_type_%s,\t\t", bcit_to_str((no_bcit = *itr)));
 					incr_itr(itr, bcit_sizeof(_bcit_8l));
 
 					printf("bc{%u}\n", bc_read(itr, no_bcit));
@@ -389,6 +390,5 @@ int main(int argc, char const *argv[]) {
 			}
 		}
 	}
-
 	return 0;
 }
