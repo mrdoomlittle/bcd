@@ -59,8 +59,8 @@ void bcii_print(mdl_u8_t **__itr) {
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
-void bcii_assign(mdl_u8_t **__itr) {
-	printf("bcii_assign,\t\t");
+void bcii_as(mdl_u8_t **__itr) {
+	printf("bcii_as,\t\t");
 
 	mdl_u8_t type;
 	printf("type_%s,\t\t", bcit_to_str((type = **__itr)));
@@ -233,8 +233,8 @@ void bcii_conv(mdl_u8_t **__itr) {
 	incr_itr((*__itr), bcit_sizeof(_bcit_addr));
 }
 
-void bcii_extern_call(mdl_u8_t **__itr) {
-	printf("bcii_extern_call,\t");
+void bcii_exc(mdl_u8_t **__itr) {
+	printf("bcii_exc,\t\t");
 
 	printf("ret_type_%s,\t\t", bcit_to_str(**__itr));
 	incr_itr((*__itr), bcit_sizeof(_bcit_8l));
@@ -315,8 +315,8 @@ int main(int argc, char const *argv[]) {
 			case _bcii_nop:
 				printf("bcii_nop.\n");
 			break;
-			case _bcii_extern_call:
-				bcii_extern_call(&itr);
+			case _bcii_exc:
+				bcii_exc(&itr);
 			break;
 			case _bcii_conv:
 				bcii_conv(&itr);
@@ -331,8 +331,8 @@ int main(int argc, char const *argv[]) {
 				printf("bcii_exit,\t\tstatus addr{0x%04x}\n", *(bci_addr_t*)itr);
 				incr_itr(itr, sizeof(bci_addr_t));
 			break;
-			case _bcii_assign:
-				bcii_assign(&itr);
+			case _bcii_as:
+				bcii_as(&itr);
 			break;
 			case _bcii_mov:
 				bcii_mov(&itr);
